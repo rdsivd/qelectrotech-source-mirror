@@ -1,4 +1,4 @@
-<definition height="70" orientation="dyyy" version="0.70" link_type="simple" type="element" hotspot_x="65" hotspot_y="26" width="130">
+<definition height="70" version="0.70" link_type="simple" type="element" hotspot_x="65" hotspot_y="26" width="130">
     <uuid uuid="{122990aa-e1f2-400d-a700-d88ee16a70d3}"/>
     <names>
         <name lang="fr">Débimétre PROMAG 10</name>
@@ -9,10 +9,10 @@
         <elementInformation name="comment" show="1"></elementInformation>
         <elementInformation name="manufacturer" show="1">HEDRESS HAUSER </elementInformation>
         <elementInformation name="supplier" show="1"></elementInformation>
-        <elementInformation name="machine-manufacturer-reference" show="1"></elementInformation>
+        <elementInformation name="machine_manufacturer_reference" show="1"></elementInformation>
         <elementInformation name="designation" show="1">PROMAG 10L</elementInformation>
         <elementInformation name="plant" show="1"></elementInformation>
-        <elementInformation name="manufacturer-reference" show="1"></elementInformation>
+        <elementInformation name="manufacturer_reference" show="1"></elementInformation>
         <elementInformation name="description" show="1"></elementInformation>
         <elementInformation name="unity" show="1"></elementInformation>
     </elementInformations>

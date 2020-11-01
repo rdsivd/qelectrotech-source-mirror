@@ -1,5 +1,5 @@
 /*
-	Copyright 2006-2019 The QElectroTech Team
+	Copyright 2006-2020 The QElectroTech Team
 	This file is part of QElectroTech.
 	
 	QElectroTech is free software: you can redistribute it and/or modify
@@ -23,6 +23,8 @@
 #include <QString>
 #include <QVariant>
 #include <QStringList>
+
+#include "pugixml.hpp"
 /**
 	This class represents a diagram context, i.e. the data (a list of key/value
 	pairs) of a diagram at a given time. It is notably used by titleblock templates
@@ -38,18 +40,18 @@
  * plant                          -> the plant assigned to the element
  * comment                        -> a little comment wich can be displayed in the folio
  * manufacturer                   -> the manufacturer of the element
- * manufacturer-reference         -> the manufacturer reference of the element
+ * manufacturer_reference         -> the manufacturer reference of the element
  * quantity                       -> quantity of the element
  * unity                          -> unity of the element
  * auxiliary1                     -> auxiliary 1 of element
  * auxiliary2                     -> auxiliary 2 of element
- * machine-manufacturer-reference -> reference of the machine manufacturer
+ * machine_manufacturer_reference -> reference of the machine manufacturer
  * supplier                       -> the supplier of the element
  * function                       -> the function of element
  * location                       -> the location assigned to the element
  * frozenLabel                    -> label locked at a given time
  *
- */
+*/
 class DiagramContext
 {
 	public:
@@ -60,6 +62,7 @@ class DiagramContext
 		};
 	
 		void add(DiagramContext other);
+		void remove(const QString &key);
 		QList<QString> keys(KeyOrder = None) const;
 		bool contains(const QString &) const;
 		const QVariant operator[](const QString &) const;
@@ -74,6 +77,7 @@ class DiagramContext
 		
 		void toXml(QDomElement &, const QString & = "property") const;
 		void fromXml(const QDomElement &, const QString & = "property");
+		void fromXml(const pugi::xml_node &dom_element, const QString &tag_name = "property");
 		void toSettings(QSettings &, const QString &) const;
 		void fromSettings(QSettings &, const QString &);
 		
@@ -86,4 +90,6 @@ class DiagramContext
 		QHash<QString, QVariant> m_content;
 		QHash<QString, bool> m_content_show;
 };
+
+QDebug operator <<(QDebug debug, const DiagramContext &context);
 #endif

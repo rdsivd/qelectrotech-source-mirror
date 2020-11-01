@@ -1,4 +1,4 @@
-<definition height="50" hotspot_x="30" hotspot_y="25" orientation="dyyy" link_type="simple" type="element" version="0.80" width="40">
+<definition height="50" hotspot_x="30" hotspot_y="25" link_type="simple" type="element" version="0.80" width="40">
     <uuid uuid="{1a8ba1ea-6c13-41d0-996b-74c83bfdb91b}"/>
     <names>
         <name lang="it">Scaricatore</name>
@@ -15,13 +15,13 @@
         <elementInformation name="quantity" show="1"></elementInformation>
         <elementInformation name="label" show="1"></elementInformation>
         <elementInformation name="supplier" show="1"></elementInformation>
-        <elementInformation name="manufacturer-reference" show="1"></elementInformation>
+        <elementInformation name="manufacturer_reference" show="1"></elementInformation>
         <elementInformation name="unity" show="1"></elementInformation>
         <elementInformation name="manufacturer" show="1"></elementInformation>
         <elementInformation name="description" show="1"></elementInformation>
         <elementInformation name="comment" show="1"></elementInformation>
         <elementInformation name="designation" show="1"></elementInformation>
-        <elementInformation name="machine-manufacturer-reference" show="1"></elementInformation>
+        <elementInformation name="machine_manufacturer_reference" show="1"></elementInformation>
     </elementInformations>
     <informations>EN 60617: 07-22-03</informations>
     <description>

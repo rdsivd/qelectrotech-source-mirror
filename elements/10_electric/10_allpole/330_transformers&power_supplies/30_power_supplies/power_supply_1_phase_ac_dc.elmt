@@ -1,4 +1,4 @@
-<definition type="element" width="100" version="0.70" orientation="dyyy" link_type="simple" hotspot_y="39" hotspot_x="30" height="80">
+<definition type="element" width="100" version="0.70" link_type="simple" hotspot_y="39" hotspot_x="30" height="80">
     <uuid uuid="{ffde5655-4105-4478-8b20-88f2ba6f33d3}"/>
     <names>
         <name lang="hu">24V DC tápegység 1 fázis</name>
@@ -9,11 +9,11 @@
         <elementInformation show="1" name="plant"></elementInformation>
         <elementInformation show="1" name="quantity"></elementInformation>
         <elementInformation show="1" name="supplier"></elementInformation>
-        <elementInformation show="1" name="machine-manufacturer-reference"></elementInformation>
+        <elementInformation show="1" name="machine_manufacturer_reference"></elementInformation>
         <elementInformation show="1" name="manufacturer"></elementInformation>
         <elementInformation show="1" name="description"></elementInformation>
         <elementInformation show="1" name="label"></elementInformation>
-        <elementInformation show="1" name="manufacturer-reference"></elementInformation>
+        <elementInformation show="1" name="manufacturer_reference"></elementInformation>
         <elementInformation show="1" name="designation"></elementInformation>
         <elementInformation show="1" name="comment"></elementInformation>
     </elementInformations>

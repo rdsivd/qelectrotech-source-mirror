@@ -1,4 +1,4 @@
-<definition height="90" hotspot_y="46" link_type="simple" hotspot_x="305" version="0.70" width="610" type="element" orientation="dyyy">
+<definition height="90" hotspot_y="46" link_type="simple" hotspot_x="305" version="0.70" width="610" type="element">
     <uuid uuid="{471c1920-be6a-4618-88dc-687bcf1d5cbc}"/>
     <names>
         <name lang="fr">1734-OE2V</name>
@@ -9,11 +9,11 @@
         <elementInformation show="1" name="plant"></elementInformation>
         <elementInformation show="1" name="unity"></elementInformation>
         <elementInformation show="1" name="manufacturer">Allen-Bradley</elementInformation>
-        <elementInformation show="1" name="manufacturer-reference"></elementInformation>
+        <elementInformation show="1" name="manufacturer_reference"></elementInformation>
         <elementInformation show="1" name="comment"></elementInformation>
         <elementInformation show="1" name="label"></elementInformation>
         <elementInformation show="1" name="supplier"></elementInformation>
-        <elementInformation show="1" name="machine-manufacturer-reference"></elementInformation>
+        <elementInformation show="1" name="machine_manufacturer_reference"></elementInformation>
         <elementInformation show="1" name="description"></elementInformation>
     </elementInformations>
     <informations></informations>

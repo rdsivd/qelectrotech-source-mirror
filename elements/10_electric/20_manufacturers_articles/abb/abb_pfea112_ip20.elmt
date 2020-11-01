@@ -1,4 +1,4 @@
-<definition hotspot_x="68" orientation="dyyy" version="0.70" hotspot_y="133" type="element" width="280" height="240" link_type="simple">
+<definition hotspot_x="68" version="0.70" hotspot_y="133" type="element" width="280" height="240" link_type="simple">
     <uuid uuid="{d84fe2b6-41db-4fc7-869b-c03d072c0517}"/>
     <names>
         <name lang="fi">ABB PFEA111/112</name>
@@ -12,12 +12,12 @@
         <elementInformation name="manufacturer" show="1">ABB</elementInformation>
         <elementInformation name="quantity" show="1"></elementInformation>
         <elementInformation name="description" show="1"></elementInformation>
-        <elementInformation name="manufacturer-reference" show="1"></elementInformation>
+        <elementInformation name="manufacturer_reference" show="1"></elementInformation>
         <elementInformation name="designation" show="1"></elementInformation>
         <elementInformation name="comment" show="1"></elementInformation>
         <elementInformation name="supplier" show="1"></elementInformation>
         <elementInformation name="label" show="1"></elementInformation>
-        <elementInformation name="machine-manufacturer-reference" show="1"></elementInformation>
+        <elementInformation name="machine_manufacturer_reference" show="1"></elementInformation>
     </elementInformations>
     <informations>Author: PAI&#xd;
 License: see http://qelectrotech.org/wiki/doc/elements_license</informations>

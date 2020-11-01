@@ -1,5 +1,5 @@
 /*
-	Copyright 2006-2019 The QElectroTech Team
+	Copyright 2006-2020 The QElectroTech Team
 	This file is part of QElectroTech.
 	
 	QElectroTech is free software: you can redistribute it and/or modify
@@ -18,6 +18,7 @@
 #ifndef NAMES_LIST_H
 #define NAMES_LIST_H
 #include <QtXml>
+#include "pugixml.hpp"
 /**
 	Cette classe represente une liste de noms, utilisee
 	par les elements et categories pour embarquer un meme nom en plusieurs
@@ -30,7 +31,6 @@ class NamesList {
 	// constructors, destructor
 	public:
 	NamesList();
-	NamesList(const NamesList &);
 	virtual ~NamesList();
 	
 	// attributes
@@ -57,6 +57,7 @@ class NamesList {
 	
 	// methods relatives a XML
 	void fromXml(const QDomElement &, const QHash<QString, QString> & = QHash<QString, QString>());
+	void fromXml(const pugi::xml_node &xml_element, const QHash<QString, QString> &xml_options = QHash<QString, QString>());
 	QDomElement toXml(QDomDocument &, const QHash<QString, QString> & = QHash<QString, QString>()) const;
 	
 	protected:

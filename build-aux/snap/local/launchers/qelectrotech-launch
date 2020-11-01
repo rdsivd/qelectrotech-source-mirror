@@ -1,0 +1,34 @@
+#!/bin/sh
+
+# a KDE session forces the KDE Plasma platformtheme which is incompatible with QET
+# unset the ENV vars in that case to prevent loading of the theme
+if [ ! -z "$KDE_FULL_SESSION" ]; then
+  unset KDE_FULL_SESSION
+fi
+
+if echo "$XDG_CURRENT_DESKTOP" | grep -q KDE; then
+  unset XDG_CURRENT_DESKTOP
+fi
+
+# migrate .qet directory from SNAP_USER_DATA to SNAP_USER_COMMON
+from="$SNAP_USER_DATA/.qet"
+to="$SNAP_USER_COMMON/.qet"
+if [ ! -d "$to" ] && [ -d "$from" ]; then
+  echo "Migrating user data from $from to $to"
+  mkdir "$to"
+  cp -av "$from/." "$to"
+fi
+
+# link DXFtoQET so that QET finds it
+mkdir -p "$HOME/.qet"
+ln -snf "$SNAP/bin/DXFtoQET" "$HOME/.qet/DXFtoQET"
+
+# start desktop portal. Open & save dialogs might fail if it is not running
+dbus-send --print-reply \
+  --dest=org.freedesktop.DBus \
+  /org/freedesktop/DBus \
+  org.freedesktop.DBus.StartServiceByName \
+  string:org.freedesktop.portal.Desktop \
+  uint32:0
+
+exec "${@}"

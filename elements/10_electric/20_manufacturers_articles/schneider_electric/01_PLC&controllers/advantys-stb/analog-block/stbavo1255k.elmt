@@ -1,4 +1,4 @@
-<definition orientation="dyyy" hotspot_x="375" link_type="simple" version="0.70" height="100" type="element" hotspot_y="42" width="750">
+<definition hotspot_x="375" link_type="simple" version="0.70" height="100" type="element" hotspot_y="42" width="750">
     <uuid uuid="{94cde6eb-d371-42e2-a419-16073f93870f}"/>
     <names>
         <name lang="fr">STBAVO1255K</name>
@@ -7,8 +7,8 @@
         <elementInformation name="supplier" show="1"></elementInformation>
         <elementInformation name="description" show="1"></elementInformation>
         <elementInformation name="quantity" show="1"></elementInformation>
-        <elementInformation name="machine-manufacturer-reference" show="1"></elementInformation>
-        <elementInformation name="manufacturer-reference" show="1"></elementInformation>
+        <elementInformation name="machine_manufacturer_reference" show="1"></elementInformation>
+        <elementInformation name="manufacturer_reference" show="1"></elementInformation>
         <elementInformation name="manufacturer" show="1">SCHNEIDER</elementInformation>
         <elementInformation name="designation" show="1">STBAVO1255K</elementInformation>
         <elementInformation name="label" show="1"></elementInformation>

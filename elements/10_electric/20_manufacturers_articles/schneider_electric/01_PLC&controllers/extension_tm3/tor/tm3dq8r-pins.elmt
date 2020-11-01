@@ -1,4 +1,4 @@
-<definition height="90" hotspot_x="495" type="element" version="0.70" link_type="simple" width="970" hotspot_y="44" orientation="dyyy">
+<definition height="90" hotspot_x="495" type="element" version="0.70" link_type="simple" width="970" hotspot_y="44">
     <uuid uuid="{a74b72ab-9e78-45f8-bacb-6fab4299ec3c}"/>
     <names>
         <name lang="fr">Cartes sorties TM3DM24R Schneider</name>
@@ -7,13 +7,13 @@
         <elementInformation name="label" show="1"></elementInformation>
         <elementInformation name="comment" show="1"></elementInformation>
         <elementInformation name="supplier" show="1"></elementInformation>
-        <elementInformation name="manufacturer-reference" show="1"></elementInformation>
+        <elementInformation name="manufacturer_reference" show="1"></elementInformation>
         <elementInformation name="quantity" show="1"></elementInformation>
         <elementInformation name="description" show="1"></elementInformation>
         <elementInformation name="designation" show="1">TM3DQ8R/G</elementInformation>
         <elementInformation name="plant" show="1"></elementInformation>
         <elementInformation name="unity" show="1"></elementInformation>
-        <elementInformation name="machine-manufacturer-reference" show="1"></elementInformation>
+        <elementInformation name="machine_manufacturer_reference" show="1"></elementInformation>
         <elementInformation name="manufacturer" show="1">Schenider</elementInformation>
     </elementInformations>
     <informations></informations>

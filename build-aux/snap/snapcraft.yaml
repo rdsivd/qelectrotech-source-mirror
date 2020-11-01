@@ -1,0 +1,124 @@
+name: qelectrotech
+title: QElectroTech
+base: core18
+adopt-info: qelectrotech
+license: GPL-2.0
+summary: Electrical diagram editor
+description: |
+  QElectroTech, or QET in short, is a libre and open source desktop application 
+  to create diagrams and schematics.
+
+grade: stable
+confinement: strict
+
+architectures:
+  - build-on: amd64
+    run-on: amd64
+
+layout:
+  /usr/local/share/qelectrotech:
+    symlink: $SNAP/usr/local/share/qelectrotech
+  /usr/share/libdrm/amdgpu.ids:
+    symlink: $SNAP/kf5/usr/share/libdrm/amdgpu.ids
+
+apps:
+  qelectrotech:
+    command: usr/local/bin/qelectrotech
+    command-chain:
+      - bin/qelectrotech-launch
+    desktop: usr/local/share/applications/qelectrotech.desktop
+    extensions: [kde-neon]
+    plugs: &plugs [opengl, unity7, home, removable-media, gsettings, network, cups-control]
+    environment: &env
+      __EGL_VENDOR_LIBRARY_DIRS: $SNAP/kf5/usr/share/glvnd/egl_vendor.d:$SNAP/usr/share/glvnd/egl_vendor.d
+      TCL_LIBRARY: $SNAP/usr/share/tcltk/tcl8.6
+      QT_QPA_PLATFORMTHEME: gtk3
+      QT_AUTO_SCREEN_SCALE_FACTOR: 1
+      HOME: $SNAP_USER_COMMON
+      PYTHONPATH: $SNAP:$SNAP/lib/python3.6/site-packages:$SNAP/usr/lib/python3.6:$SNAP/usr/lib/python3.6/lib-dynload
+
+  qet-tb-generator:
+    command: bin/qelectrotech-launch $SNAP/bin/qet_tb_generator
+    extensions: [kde-neon]
+    plugs: *plugs
+    environment: *env
+      
+  dxf-to-qet:
+    command: bin/DXFtoQET
+    extensions: [kde-neon]
+    plugs: *plugs
+    environment: *env
+
+parts:
+  launchers:
+    plugin: dump
+    source: build-aux/snap/local/launchers
+    organize:
+      '*': bin/
+
+  qet-tb-generator:
+    plugin: python
+    python-version: python3
+    source: https://github.com/qelectrotech/qet_tb_generator.git
+    stage-packages: 
+      - python3-lxml
+      - python3-tk
+      - libtk8.6
+
+  kde-sdk-setup:
+    plugin: nil
+    build-snaps:
+      - kde-frameworks-5-core18-sdk
+    build-packages:
+      - g++
+      - mesa-common-dev
+      - libglvnd-dev
+      - rsync
+    override-build: |
+      rsync -a --ignore-existing /snap/kde-frameworks-5-core18-sdk/current/ /
+      
+  dxf-to-qet:
+    after: [kde-sdk-setup]
+    plugin: nil
+    source: https://github.com/qelectrotech/DXFtoQET-2020.git
+    override-build: |
+      qmake "$SNAPCRAFT_PART_SRC/DXFtoQET.pro"
+      make -j$(nproc)
+      mkdir -p "$SNAPCRAFT_PART_INSTALL/bin"
+      cp DXFtoQET "$SNAPCRAFT_PART_INSTALL/bin/"
+
+  qelectrotech:
+    after: [kde-sdk-setup]
+    plugin: nil
+    source: .
+    stage-packages: [ git, sqlite3 ]
+    build-packages:
+      - git
+      - libsqlite3-dev
+    override-pull: |
+      snapcraftctl pull
+      snap_version=$(git describe --dirty)
+      modified_displayed_version=$snap_version".snap"
+      sed -i -E "s|const QString displayedVersion =.*|const QString displayedVersion =\"$modified_displayed_version\";|" sources/qet.h
+      snapcraftctl set-version "$snap_version"
+    override-build: |
+      qmake "$SNAPCRAFT_PART_SRC/qelectrotech.pro"
+      make -j$(nproc)
+      make install INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL"
+    override-stage: |
+      snapcraftctl stage
+      # patch desktop file with correct icon path
+      SED_CMD="sed -i -E s|^Icon=(.*)|Icon=\${SNAP}/usr/local/share/icons/hicolor/128x128/apps/\1.png|g" 
+      $SED_CMD usr/local/share/applications/qelectrotech.desktop
+
+  cleanup:
+    after: [qelectrotech, dxf-to-qet, qet-tb-generator]
+    plugin: nil
+    build-snaps: [core18, kde-frameworks-5-core18]
+    override-prime: |
+      # Remove all files from snap that are already included in the base snap or in
+      # any connected content snaps
+      set -eux
+      for snap in "core18" "kde-frameworks-5-core18"; do  # List all content-snaps and base snaps you're using here
+        cd "/snap/$snap/current" && find . -type f,l -exec rm -f "$SNAPCRAFT_PRIME/{}" \;
+      done

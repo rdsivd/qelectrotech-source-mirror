@@ -1,5 +1,5 @@
 /*
-	Copyright 2006-2019 The QElectroTech Team
+	Copyright 2006-2020 The QElectroTech Team
 	This file is part of QElectroTech.
 
 	QElectroTech is free software: you can redistribute it and/or modify
@@ -19,6 +19,7 @@
 #define ELEMENTSCOLLECTIONMODEL2_H
 
 #include <QStandardItemModel>
+#include <QHash>
 #include "elementslocation.h"
 
 class XmlProjectElementCollectionItem;
@@ -60,8 +61,9 @@ class ElementsCollectionModel : public QStandardItemModel
 		QModelIndex indexFromLocation(const ElementsLocation &location);
 
 	signals:
-		void loadingMaxValue(int);
-		void loadingProgressValue(int);
+		void loadingProgressValueChanged(int);
+		void loadingProgressRangeChanged(int, int);
+		void loadingFinished();
 
 	private:
 		void elementIntegratedToCollection (const QString& path);
@@ -72,6 +74,8 @@ class ElementsCollectionModel : public QStandardItemModel
 		QList <QETProject *> m_project_list;
 		QHash <QETProject *, XmlProjectElementCollectionItem *> m_project_hash;
 		bool m_hide_element = false;
+		QFuture<void> m_future;
+		QList <ElementCollectionItem *> m_items_list_to_setUp;
 };
 
 #endif // ELEMENTSCOLLECTIONMODEL2_H

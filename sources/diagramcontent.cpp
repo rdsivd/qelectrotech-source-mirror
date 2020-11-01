@@ -1,5 +1,5 @@
 /*
-	Copyright 2006-2019 The QElectroTech Team
+	Copyright 2006-2020 The QElectroTech Team
 	This file is part of QElectroTech.
 	
 	QElectroTech is free software: you can redistribute it and/or modify
@@ -27,18 +27,21 @@
 #include "diagram.h"
 #include "terminal.h"
 #include "conductortextitem.h"
+#include "qetgraphicstableitem.h"
 
 /**
- * @brief DiagramContent::DiagramContent
- */
-DiagramContent::DiagramContent() {}
+	@brief DiagramContent::DiagramContent
+*/
+DiagramContent::DiagramContent()
+{}
 
 /**
- * @brief DiagramContent::DiagramContent
- * Constructor
- * @param diagram : Construct a diagramContent and fill it with the selected item of @diagram
- * @param selected : this diagramcontent get only selected items if true.
- */
+	@brief DiagramContent::DiagramContent
+	Constructor
+	@param diagram :
+	Construct a diagramContent and fill it with the selected item of diagram
+	@param selected : this diagramcontent get only selected items if true.
+*/
 DiagramContent::DiagramContent(Diagram *diagram, bool selected) :
 	m_selected_items(diagram->selectedItems())
 {
@@ -49,97 +52,82 @@ DiagramContent::DiagramContent(Diagram *diagram, bool selected) :
 		item_list = diagram->items();
 	}
 
-	
-	for (QGraphicsItem *item : item_list)
+	for (auto item : item_list)
 	{
-		if (Element *elmt = qgraphicsitem_cast<Element *>(item))
-			m_elements << elmt;
-		else if (IndependentTextItem *iti = qgraphicsitem_cast<IndependentTextItem *>(item))
-			m_text_fields << iti;
-		else if (Conductor *c = qgraphicsitem_cast<Conductor *>(item))
+		switch (item->type())
 		{
-				//Get the isolated selected conductor (= not movable, but deletable)
-			if (!c->terminal1->parentItem()->isSelected() &&\
-				!c->terminal2->parentItem()->isSelected()) {
-				m_other_conductors << c;
-			}
-			
-			if (m_potential_conductors.isEmpty()) {
-				m_potential_conductors << c;
-			}
-			else
+			case Element::Type:             { m_elements    << qgraphicsitem_cast<Element *>(item);             break;}
+			case IndependentTextItem::Type: { m_text_fields << qgraphicsitem_cast<IndependentTextItem *>(item); break;}
+			case Conductor::Type:
 			{
-				if (!potentialIsManaged(c->relatedPotentialConductors(true).toList()))
+				auto c = qgraphicsitem_cast<Conductor *>(item);
+					//Get the isolated selected conductor (= not movable, but deletable)
+				if (!c->terminal1->parentItem()->isSelected() &&\
+					!c->terminal2->parentItem()->isSelected()) {
+					m_other_conductors << c;
+				}
+
+				if (m_potential_conductors.isEmpty()) {
 					m_potential_conductors << c;
+				} else {
+					if (!potentialIsManaged(c->relatedPotentialConductors(true).values())) {
+						m_potential_conductors << c;
+					}
+				}
+				break;
 			}
+			case DiagramImageItem::Type:       { m_images        << qgraphicsitem_cast<DiagramImageItem *>(item);       break;}
+			case QetShapeItem::Type:           { m_shapes        << qgraphicsitem_cast<QetShapeItem *>(item);           break;}
+			case DynamicElementTextItem::Type: { m_element_texts << qgraphicsitem_cast<DynamicElementTextItem *>(item); break;}
+			case QGraphicsItemGroup::Type: {
+				if (auto *group = dynamic_cast<ElementTextItemGroup *>(item)) {
+					m_texts_groups << group;
+				}
+				break;
+			}
+			case QetGraphicsTableItem::Type: { m_tables << qgraphicsitem_cast<QetGraphicsTableItem *>(item); break;}
 		}
-		else if (DiagramImageItem *dii = qgraphicsitem_cast<DiagramImageItem *>(item))
-			m_images << dii;
-		else if (QetShapeItem *dsi = qgraphicsitem_cast<QetShapeItem *>(item))
-			m_shapes << dsi;
-		else if (DynamicElementTextItem *deti = qgraphicsitem_cast<DynamicElementTextItem *>(item))
-			m_element_texts << deti;
-		else if (QGraphicsItemGroup *group = qgraphicsitem_cast<QGraphicsItemGroup *>(item))
-			if(ElementTextItemGroup *etig = dynamic_cast<ElementTextItemGroup *>(group))
-				m_texts_groups << etig;
 	}
 		
 	
 		//For each selected element, we determine if conductors must be moved or updated.
 	for(Element *elmt : m_elements)
 	{
-        if (elmt->isSelected())
-        {
-            for(Terminal *terminal : elmt->terminals())
-            {
-                for(Conductor *conductor : terminal->conductors())
-                {
-                    Terminal *other_terminal;
-                    if (conductor->terminal1 == terminal)
-                        other_terminal = conductor->terminal2;
-                    else
-                        other_terminal = conductor->terminal1;
+		if (elmt->isSelected())
+		{
+			for(Terminal *terminal : elmt->terminals())
+			{
+				for(Conductor *conductor : terminal->conductors())
+				{
+					Terminal *other_terminal;
+					if (conductor->terminal1 == terminal)
+						other_terminal = conductor->terminal2;
+					else
+						other_terminal = conductor->terminal1;
 
-                    //If the two elements of conductor are movable
-                    if (m_elements.contains(other_terminal -> parentElement()) && !m_conductors_to_move.contains(conductor))
-                        m_conductors_to_move << conductor;
-                    else if (!m_conductors_to_update.contains(conductor))
-                        m_conductors_to_update << conductor;
-                }
-            }
-        }
+						//If the two elements of conductor are movable
+					if (m_elements.contains(other_terminal -> parentElement())) {
+						if (!m_conductors_to_move.contains(conductor))
+							m_conductors_to_move << conductor;
+					}
+					else if (!m_conductors_to_update.contains(conductor))
+						m_conductors_to_update << conductor;
+				}
+			}
+		}
 	}
 }
-
-/**
- * @brief DiagramContent::DiagramContent
- * Copy constructor
- * @param other
- */
-DiagramContent::DiagramContent(const DiagramContent &other) :
-	m_elements(other.m_elements),
-	m_text_fields(other.m_text_fields),
-	m_images(other.m_images),
-	m_shapes(other.m_shapes),
-	m_conductors_to_update(other.m_conductors_to_update),
-	m_conductors_to_move(other.m_conductors_to_move),
-	m_other_conductors(other.m_other_conductors),
-	m_potential_conductors(other.m_potential_conductors),
-	m_element_texts(other.m_element_texts),
-	m_texts_groups(other.m_texts_groups),
-	m_selected_items(other.m_selected_items)
-{}
 
 DiagramContent::~DiagramContent()
 {}
 
 /**
- * @brief DiagramContent::selectedTexts
- * @return a list of every selected texts (every kind of texts)
- * Note that the returned list of texts, correspond to the selected texts
- * at the moment of the creation of this DiagramContent,
- * with the constructor :  DiagramContent::DiagramContent(Diagram *diagram)
- */
+	@brief DiagramContent::selectedTexts
+	@return a list of every selected texts (every kind of texts)
+	Note that the returned list of texts, correspond to the selected texts
+	at the moment of the creation of this DiagramContent,
+	with the constructor :  DiagramContent::DiagramContent(Diagram *diagram)
+*/
 QList<DiagramTextItem *> DiagramContent::selectedTexts() const
 {
 	QList<DiagramTextItem *> selected_texts;
@@ -154,12 +142,12 @@ QList<DiagramTextItem *> DiagramContent::selectedTexts() const
 }
 
 /**
- * @brief DiagramContent::selectedTextsGroup
- * @return a list of selected texts group
- * Note that the returned list of texts group, correspond to the selected texts group
- * at the moment of the creation of this DiagramContent,
- * with the constructor :  DiagramContent::DiagramContent(Diagram *diagram)
- */
+	@brief DiagramContent::selectedTextsGroup
+	@return a list of selected texts group
+	Note that the returned list of texts group, correspond to the selected texts group
+	at the moment of the creation of this DiagramContent,
+	with the constructor :  DiagramContent::DiagramContent(Diagram *diagram)
+*/
 QList<ElementTextItemGroup *> DiagramContent::selectedTextsGroup() const
 {
 	QList<ElementTextItemGroup *> groups;
@@ -173,10 +161,10 @@ QList<ElementTextItemGroup *> DiagramContent::selectedTextsGroup() const
 }
 
 /**
- * @brief DiagramContent::conductors
- * @param filter
- * @return Every conductors according to the filter
- */
+	@brief DiagramContent::conductors
+	@param filter
+	@return Every conductors according to the filter
+*/
 QList<Conductor *> DiagramContent::conductors(int filter) const
 {
 	QList<Conductor *> result;
@@ -194,12 +182,12 @@ QList<Conductor *> DiagramContent::conductors(int filter) const
 }
 
 /**
- * @brief DiagramContent::hasDeletableItems
- * @return true if this diagram content have deletable item
- * The deletable items correspond to the selected items of diagram
- * at the moment of the creation of this DiagramContent,
- * with the constructor :  DiagramContent::DiagramContent(Diagram *diagram)
- */
+	@brief DiagramContent::hasDeletableItems
+	@return true if this diagram content have deletable item
+	The deletable items correspond to the selected items of diagram
+	at the moment of the creation of this DiagramContent,
+	with the constructor :  DiagramContent::DiagramContent(Diagram *diagram)
+*/
 bool DiagramContent::hasDeletableItems() const
 {
 	for(QGraphicsItem *qgi : m_selected_items)
@@ -209,7 +197,8 @@ bool DiagramContent::hasDeletableItems() const
 			qgi->type() == IndependentTextItem::Type ||
 			qgi->type() == QetShapeItem::Type ||
 			qgi->type() == DiagramImageItem::Type ||
-			qgi->type() == DynamicElementTextItem::Type)
+			qgi->type() == DynamicElementTextItem::Type ||
+			qgi->type() == QetGraphicsTableItem::Type)
 			return true;
 		if(qgi->type() == QGraphicsItemGroup::Type)
 			if(dynamic_cast<ElementTextItemGroup *>(qgi))
@@ -219,9 +208,9 @@ bool DiagramContent::hasDeletableItems() const
 }
 
 /**
- * @brief DiagramContent::hasCopiableItems
- * @return true if this diagram content have copiable items.
- */
+	@brief DiagramContent::hasCopiableItems
+	@return true if this diagram content have copiable items.
+*/
 bool DiagramContent::hasCopiableItems() const
 {
 	if(!m_images.isEmpty())      return true;
@@ -233,9 +222,9 @@ bool DiagramContent::hasCopiableItems() const
 }
 
 /**
- * @brief DiagramContent::clear
- * Remove all items from the diagram content
- */
+	@brief DiagramContent::clear
+	Remove all items from the diagram content
+*/
 void DiagramContent::clear()
 {
 	m_elements.clear();
@@ -248,13 +237,14 @@ void DiagramContent::clear()
 	m_element_texts.clear();
 	m_texts_groups.clear();
 	m_selected_items.clear();
+	m_tables.clear();
 }
 
 /**
- * @brief DiagramContent::removeNonMovableItems
- * Remove all non movable item.
- * @return : return the numbers of removed item
- */
+	@brief DiagramContent::removeNonMovableItems
+	Remove all non movable item.
+	@return : return the numbers of removed item
+*/
 int DiagramContent::removeNonMovableItems()
 {
 	int count_ = 0;
@@ -330,21 +320,25 @@ DiagramContent &DiagramContent::operator+=(const DiagramContent &other)
 	
 	for (Conductor *c : other.m_potential_conductors)
 	{
-		QList<Conductor *> c_list = c->relatedPotentialConductors(true).toList();
+	        QList<Conductor *> c_list = c->relatedPotentialConductors(true).values();
 		c_list << c;
 		if (!potentialIsManaged(c_list)) {
 			m_potential_conductors << c;
 		}
 	}
+
+	for (auto table : other.m_tables)
+		if (!m_tables.contains(table))
+			m_tables << table;
 	
 	return *this;
 }
 
 /**
- * @brief DiagramContent::potentialIsManaged
- * @param conductors a list of conductors at the same potential.
- * @return true, if m_potential_conductors already have a conductor of this potential.
- */
+	@brief DiagramContent::potentialIsManaged
+	@param conductors a list of conductors at the same potential.
+	@return true, if m_potential_conductors already have a conductor of this potential.
+*/
 bool DiagramContent::potentialIsManaged(QList<Conductor *> conductors)
 {
 	bool b = false;
@@ -359,9 +353,9 @@ bool DiagramContent::potentialIsManaged(QList<Conductor *> conductors)
 }
 
 /**
- * @brief DiagramContent::hasTextEditing
- * @return true if handle a text currently in editing intercation
- */
+	@brief DiagramContent::hasTextEditing
+	@return true if handle a text currently in editing intercation
+*/
 bool DiagramContent::hasTextEditing()
 {
 	for (DiagramTextItem *dti : selectedTexts()) {
@@ -374,22 +368,23 @@ bool DiagramContent::hasTextEditing()
 }
 
 /**
- * @brief DiagramContent::items
- * @param filter
- * @return The items of this diagram content according to @filter
- */
+	@brief DiagramContent::items
+	@param filter
+	@return The items of this diagram content according to filter
+*/
 QList<QGraphicsItem *> DiagramContent::items(int filter) const
 {
 	QList<QGraphicsItem *> items_list;
 	
 	for(QGraphicsItem *qgi : conductors(filter)) items_list << qgi;
 
-	if (filter & Elements)          for(QGraphicsItem *qgi : m_elements)      items_list << qgi;
-	if (filter & TextFields)        for(QGraphicsItem *qgi : m_text_fields)   items_list << qgi;
-	if (filter & Images)            for(QGraphicsItem *qgi : m_images)        items_list << qgi;
-	if (filter & Shapes)            for(QGraphicsItem *qgi : m_shapes)        items_list << qgi;
-	if (filter & ElementTextFields) for(QGraphicsItem *qgi : m_element_texts) items_list << qgi;
-	if (filter & TextGroup)			for(QGraphicsItem *qgi : m_texts_groups)   items_list << qgi;
+	if (filter & Elements)          for(auto qgi : m_elements)      items_list << qgi;
+	if (filter & TextFields)        for(auto qgi : m_text_fields)   items_list << qgi;
+	if (filter & Images)            for(auto qgi : m_images)        items_list << qgi;
+	if (filter & Shapes)            for(auto qgi : m_shapes)        items_list << qgi;
+	if (filter & ElementTextFields) for(auto qgi : m_element_texts) items_list << qgi;
+	if (filter & TextGroup)			for(auto qgi : m_texts_groups)  items_list << qgi;
+	if (filter & Tables)            for(auto qgi : m_tables)        items_list << qgi;
 
 	if (filter & SelectedOnly) {
 		for(QGraphicsItem *qgi : items_list) {
@@ -400,23 +395,24 @@ QList<QGraphicsItem *> DiagramContent::items(int filter) const
 }
 
 /**
- * @brief DiagramContent::count
- * @param filter
- * @return The number of items, according to @filter
- */
+	@brief DiagramContent::count
+	@param filter
+	@return The number of items, according to filter
+*/
 int DiagramContent::count(int filter) const
 {
 	int count = 0;
 	if (filter & SelectedOnly) {
-		if (filter & Elements)           for(Element *element :     m_elements)               { if (element   -> isSelected()) ++ count; }
-		if (filter & TextFields)         for(DiagramTextItem *dti : m_text_fields)            { if (dti       -> isSelected()) ++ count; }
-		if (filter & Images)             for(DiagramImageItem *dii : m_images)                { if (dii       -> isSelected()) ++ count; }
-		if (filter & Shapes)             for(QetShapeItem *dsi : m_shapes)                    { if (dsi       -> isSelected()) ++ count; }
-		if (filter & ConductorsToMove)   for(Conductor *conductor : m_conductors_to_move)     { if (conductor -> isSelected()) ++ count; }
-		if (filter & ConductorsToUpdate) for(Conductor *conductor : m_conductors_to_update)   { if (conductor -> isSelected()) ++ count; }
-		if (filter & OtherConductors)    for(Conductor *conductor : m_other_conductors)       { if (conductor -> isSelected()) ++ count; }
-		if (filter & ElementTextFields)  for(DynamicElementTextItem *deti : m_element_texts)  { if (deti      -> isSelected()) ++ count; }
-		if (filter & TextGroup)          for(ElementTextItemGroup *etig : m_texts_groups)      { if (etig      -> isSelected()) ++ count; }
+		if (filter & Elements)           for(auto element   :     m_elements)         { if (element   -> isSelected()) ++ count; }
+		if (filter & TextFields)         for(auto dti       : m_text_fields)          { if (dti       -> isSelected()) ++ count; }
+		if (filter & Images)             for(auto dii       : m_images)               { if (dii       -> isSelected()) ++ count; }
+		if (filter & Shapes)             for(auto dsi       : m_shapes)               { if (dsi       -> isSelected()) ++ count; }
+		if (filter & ConductorsToMove)   for(auto conductor : m_conductors_to_move)   { if (conductor -> isSelected()) ++ count; }
+		if (filter & ConductorsToUpdate) for(auto conductor : m_conductors_to_update) { if (conductor -> isSelected()) ++ count; }
+		if (filter & OtherConductors)    for(auto conductor : m_other_conductors)     { if (conductor -> isSelected()) ++ count; }
+		if (filter & ElementTextFields)  for(auto deti      : m_element_texts)        { if (deti      -> isSelected()) ++ count; }
+		if (filter & TextGroup)          for(auto etig      : m_texts_groups)         { if (etig      -> isSelected()) ++ count; }
+		if (filter & Tables)             for(auto table     : m_tables)               { if (table     -> isSelected()) ++ count;  }
 	}
 	else {
 		if (filter & Elements)           count += m_elements.count();
@@ -428,16 +424,18 @@ int DiagramContent::count(int filter) const
 		if (filter & OtherConductors)    count += m_other_conductors.count();
 		if (filter & ElementTextFields)  count += m_element_texts.count();
 		if (filter & TextGroup)			 count += m_texts_groups.count();
+		if (filter & Tables)             count += m_tables.count();
 	}
 	return(count);
 }
 
 /**
- * @brief DiagramContent::sentence
- * @param filter
- * @return A string that describe the items of the diagram content according to @filter.
- * Exemple : X elements, Y conductors etc....
- */
+	@brief DiagramContent::sentence
+	@param filter
+	@return A string that describe the items of the diagram
+	content according to filter.
+	Exemple : X elements, Y conductors etc....
+*/
 QString DiagramContent::sentence(int filter) const
 {
 	int elements_count   = (filter & Elements) ? m_elements.count() : 0;
@@ -446,6 +444,7 @@ QString DiagramContent::sentence(int filter) const
 	int images_count	 = (filter & Images) ? m_images.count() : 0;
 	int shapes_count	 = (filter & Shapes) ? m_shapes.count() : 0;
 	int elmt_text_count  = (filter & ElementTextFields) ? m_element_texts.count() : 0;
+	int tables_count     = (filter & Tables) ? m_tables.count() : 0;
 	
 	return(
 		QET::ElementsAndConductorsSentence(
@@ -454,19 +453,20 @@ QString DiagramContent::sentence(int filter) const
 			textfields_count,
 			images_count,
 			shapes_count,
-			elmt_text_count		
+			elmt_text_count,
+			tables_count
 		)
 	);
 }
 
 /**
- * @brief operator << Use to debug a diagram content
- * @param d : QDebug to use for display the debug info
- * @param content : content to debug
- * @return 
- */
+	@brief operator << Use to debug a diagram content
+	@param d : QDebug to use for display the debug info
+	@param content : content to debug
+	@return
+*/
 QDebug &operator<<(QDebug d, DiagramContent &content) {
-	Q_UNUSED(content);
+	Q_UNUSED(content)
 	d << "DiagramContent {" << "\n";
 	/*
 	FIXME Le double-heritage QObject / QGraphicsItem a casse cet operateur

@@ -1,4 +1,4 @@
-<definition height="110" link_type="simple" width="210" version="0.80" type="element" orientation="dyyy" hotspot_x="105" hotspot_y="51">
+<definition height="110" link_type="simple" width="210" version="0.80" type="element" hotspot_x="105" hotspot_y="51">
     <uuid uuid="{df5f27ea-0f60-4bd6-a2ca-4ae0f6aeb059}"/>
     <names>
         <name lang="be">ECOdevices</name>
@@ -13,8 +13,8 @@
     <elementInformations>
         <elementInformation show="1" name="plant"></elementInformation>
         <elementInformation show="1" name="supplier"></elementInformation>
-        <elementInformation show="1" name="machine-manufacturer-reference"></elementInformation>
-        <elementInformation show="1" name="manufacturer-reference"></elementInformation>
+        <elementInformation show="1" name="machine_manufacturer_reference"></elementInformation>
+        <elementInformation show="1" name="manufacturer_reference"></elementInformation>
         <elementInformation show="1" name="manufacturer">GCE</elementInformation>
         <elementInformation show="1" name="label"></elementInformation>
         <elementInformation show="1" name="description"></elementInformation>

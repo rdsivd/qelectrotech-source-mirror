@@ -1,5 +1,5 @@
-/*
-	Copyright 2006-2019 The QElectroTech Team
+﻿/*
+	Copyright 2006-2020 The QElectroTech Team
 	This file is part of QElectroTech.
 	
 	QElectroTech is free software: you can redistribute it and/or modify
@@ -20,22 +20,34 @@
 
 #include "nameslist.h"
 #include "diagramcontext.h"
+#include "pugixml.hpp"
 #include <QString>
 #include <QIcon>
+
+#ifndef Q_OS_LINUX
+#include "sstream"
+#endif
 
 class QETProject;
 class XmlElementCollection;
 
 /**
+	@brief The ElementsLocation class
+	This class represents the location,
+	the location of an element or of a category,
+	even of a collection ... in a collection.
+	She encapsulates a virtual path.
+	\~French
 	Cette classe represente la localisation, l'emplacement d'un element ou
-	d'une categorie, voire d'une collection... dans une collection. Elle
-	encapsule un chemin virtuel.
+	d'une categorie, voire d'une collection... dans une collection.
+	Elle encapsule un chemin virtuel.
 */
 class ElementsLocation
 {
 	public:
 		ElementsLocation();
-		ElementsLocation(const QString &path, QETProject *project = nullptr);
+		ElementsLocation(const QString &path,
+				 QETProject *project = nullptr);
 		ElementsLocation(const ElementsLocation &);
 		ElementsLocation(const QMimeData *data);
 		virtual ~ElementsLocation();
@@ -45,7 +57,6 @@ class ElementsLocation
 	
 	public:
 		QString baseName() const;
-		int projectId() const;
 
 		QString collectionPath(bool protocol = true) const;
 		QString projectCollectionPath() const;
@@ -73,6 +84,7 @@ class ElementsLocation
 		NamesList nameList();
 
 		QDomElement xml() const;
+		pugi::xml_document pugiXml() const;
 		bool setXml(const QDomDocument &xml_document) const;
 		QUuid uuid() const;
 		QIcon icon() const;
@@ -84,6 +96,9 @@ class ElementsLocation
 		QString m_collection_path;
 		QString m_file_system_path;
 		QETProject *m_project = nullptr;
+#ifndef Q_OS_LINUX
+		mutable std::stringstream m_string_stream;
+#endif
 	
 	public:
 		static int MetaTypeId; ///< Id of the corresponding Qt meta type
@@ -92,5 +107,5 @@ class ElementsLocation
 QDebug operator<<(QDebug debug, const ElementsLocation &location);
 
 Q_DECLARE_METATYPE(ElementsLocation)
-uint qHash(const ElementsLocation &);
+//uint qHash(const ElementsLocation &);
 #endif

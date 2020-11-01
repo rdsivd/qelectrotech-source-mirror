@@ -1,5 +1,5 @@
 /*
-	Copyright 2006-2019 The QElectroTech Team
+	Copyright 2006-2020 The QElectroTech Team
 	This file is part of QElectroTech.
 
 	QElectroTech is free software: you can redistribute it and/or modify
@@ -20,10 +20,12 @@
 
 #include <QUuid>
 #include <QList>
+#include <QAbstractTableModel>
 
 class QETProject;
 class Diagram;
 class Element;
+class QetGraphicsTableItem;
 
 /**
   this class can search in the given diagram or project some kind of element
@@ -34,14 +36,16 @@ class Element;
 class ElementProvider
 {
 	public:
-	ElementProvider(QETProject *prj, Diagram *diagram=nullptr);
-	ElementProvider(Diagram *diag);
-	QList <Element *> freeElement(const int filter) const;
-	QList <Element *> fromUuids(QList <QUuid>) const;
-	QList <Element *> find(const int filter) const;
+		ElementProvider(QETProject *prj, Diagram *diagram=nullptr);
+		ElementProvider(Diagram *diag);
+		QList <Element *> freeElement(const int filter) const;
+		QList <Element *> fromUuids(QList <QUuid>) const;
+		QList <Element *> find(const int filter) const;
+		QVector <QetGraphicsTableItem *> table(QetGraphicsTableItem *table = nullptr, QAbstractItemModel *model = nullptr);
+		QetGraphicsTableItem *tableFromUuid(const QUuid &uuid);
 
 	private:
-	QList <Diagram *> diag_list;
+		QList <Diagram *> m_diagram_list;
 };
 
 #endif // ELEMENTPROVIDER_H

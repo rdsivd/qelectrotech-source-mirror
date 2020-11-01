@@ -1,4 +1,4 @@
-<definition orientation="dyyy" hotspot_x="383" link_type="simple" version="0.70" height="100" type="element" hotspot_y="52" width="750">
+<definition hotspot_x="383" link_type="simple" version="0.70" height="100" type="element" hotspot_y="52" width="750">
     <uuid uuid="{19a4512e-8078-4766-b953-450ffdb1bc79}"/>
     <names>
         <name lang="fr">STBDDI3725KC</name>
@@ -6,9 +6,9 @@
     <elementInformations>
         <elementInformation name="supplier" show="1"></elementInformation>
         <elementInformation name="description" show="1"></elementInformation>
-        <elementInformation name="manufacturer-reference" show="1"></elementInformation>
+        <elementInformation name="manufacturer_reference" show="1"></elementInformation>
         <elementInformation name="quantity" show="1"></elementInformation>
-        <elementInformation name="machine-manufacturer-reference" show="1"></elementInformation>
+        <elementInformation name="machine_manufacturer_reference" show="1"></elementInformation>
         <elementInformation name="manufacturer" show="1">SCHNEIDER</elementInformation>
         <elementInformation name="designation" show="1">STBDDI3725KC</elementInformation>
         <elementInformation name="label" show="1"></elementInformation>

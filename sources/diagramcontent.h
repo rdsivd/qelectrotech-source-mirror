@@ -1,5 +1,5 @@
 /*
-	Copyright 2006-2019 The QElectroTech Team
+	Copyright 2006-2020 The QElectroTech Team
 	This file is part of QElectroTech.
 	
 	QElectroTech is free software: you can redistribute it and/or modify
@@ -19,6 +19,7 @@
 #define DIAGRAM_CONTENT_H
 
 #include <QSet>
+#include <QVector>
 
 class QGraphicsItem;
 class Conductor;
@@ -30,6 +31,7 @@ class DynamicElementTextItem;
 class ElementTextItemGroup;
 class Diagram;
 class DiagramTextItem;
+class QetGraphicsTableItem;
 
 /**
 	This class provides a container that makes the transmission of diagram content
@@ -45,7 +47,6 @@ class DiagramContent
 	public:
 		DiagramContent();
 		DiagramContent(Diagram *diagram, bool selected = true);
-		DiagramContent(const DiagramContent &);
 		~DiagramContent();
 		
 		/// Used to filter the different items carried by this container.
@@ -60,8 +61,9 @@ class DiagramContent
 			AnyConductor = 112,
 			Shapes = 128,
 			TextGroup = 256,
-			All = 511,
-			SelectedOnly = 512
+			Tables = 512,
+			All = 1023,
+			SelectedOnly = 1024
 		};
 		
 		QList<Element *> m_elements;
@@ -75,6 +77,8 @@ class DiagramContent
 		QSet<DynamicElementTextItem *> m_element_texts;
 		QSet<ElementTextItemGroup *> m_texts_groups;
 		QList<QGraphicsItem *> m_selected_items;
+		QVector<QetGraphicsTableItem *> m_tables;
+
 		
 		QList<DiagramTextItem *> selectedTexts() const;
 		QList<ElementTextItemGroup *> selectedTextsGroup() const;

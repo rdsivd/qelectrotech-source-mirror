@@ -1,4 +1,4 @@
-<definition height="90" hotspot_y="44" link_type="simple" hotspot_x="305" version="0.70" width="610" type="element" orientation="dyyy">
+<definition height="90" hotspot_y="44" link_type="simple" hotspot_x="305" version="0.70" width="610" type="element">
     <uuid uuid="{c7c17750-3dc6-4baf-9d8a-290b22840f05}"/>
     <names>
         <name lang="fr">1734-OB4</name>
@@ -9,11 +9,11 @@
         <elementInformation show="1" name="comment"></elementInformation>
         <elementInformation show="1" name="designation">1734-OB4</elementInformation>
         <elementInformation show="1" name="manufacturer">Allen-Bradley</elementInformation>
-        <elementInformation show="1" name="manufacturer-reference"></elementInformation>
+        <elementInformation show="1" name="manufacturer_reference"></elementInformation>
         <elementInformation show="1" name="unity"></elementInformation>
         <elementInformation show="1" name="label"></elementInformation>
         <elementInformation show="1" name="supplier"></elementInformation>
-        <elementInformation show="1" name="machine-manufacturer-reference"></elementInformation>
+        <elementInformation show="1" name="machine_manufacturer_reference"></elementInformation>
         <elementInformation show="1" name="description"></elementInformation>
     </elementInformations>
     <informations>Author: The QElectroTech team

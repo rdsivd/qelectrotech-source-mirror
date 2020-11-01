@@ -1,5 +1,5 @@
 /*
-	Copyright 2006-2019 The QElectroTech Team
+	Copyright 2006-2020 The QElectroTech Team
 	This file is part of QElectroTech.
 
 	QElectroTech is free software: you can redistribute it and/or modify
@@ -27,15 +27,17 @@ namespace Ui {
 }
 
 /**
- * @brief The ReplaceConductorDialog class
- * A Qdialog to edit a conductor properties, use for the search and replace feature of QElectrotech.
- */
+	@brief The ReplaceConductorDialog class
+	A Qdialog to edit a conductor properties, use for the search and replace feature of QElectrotech.
+*/
 class ReplaceConductorDialog : public QDialog
 {
 	Q_OBJECT
 	
 	public:
-		explicit ReplaceConductorDialog(const ConductorProperties &properties, QWidget *parent = 0);
+		explicit ReplaceConductorDialog(
+			const ConductorProperties &properties,
+			QWidget *parent = 0);
 		~ReplaceConductorDialog();
 		void updatePreview(bool b=true);
 		void setProperties(const ConductorProperties &properties);
@@ -51,6 +53,8 @@ class ReplaceConductorDialog : public QDialog
 		void on_m_erase_text_cb_clicked();
 		void on_m_erase_function_cb_clicked();
 		void on_m_erase_tension_protocol_cb_clicked();
+		void on_m_erase_m_wire_color_cb_clicked();
+		void on_m_erase_m_wire_section_cb_clicked();
 		void on_m_earth_cb_toggled(bool checked);
 		void on_m_neutral_cb_toggled(bool checked);
 		void on_m_update_preview_pb_clicked();
